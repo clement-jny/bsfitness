@@ -4,6 +4,7 @@ import {
   Poppins_500Medium,
   Poppins_700Bold,
 } from "@expo-google-fonts/poppins";
+import { Slot, Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 
@@ -27,5 +28,10 @@ export default function RootLayout() {
     return null;
   }
 
-  return null;
+  return (
+    <Stack>
+      <Stack.Screen name="index" />
+      <Stack.Screen name="+not-found" />
+    </Stack>
+  );
 }
