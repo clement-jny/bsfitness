@@ -3,15 +3,19 @@ import {
   Poppins_400Regular,
   Poppins_500Medium,
   Poppins_700Bold,
-} from "@expo-google-fonts/poppins";
-import { Slot, Stack } from "expo-router";
-import * as SplashScreen from "expo-splash-screen";
-import { useEffect } from "react";
+} from '@expo-google-fonts/poppins';
+import { Slot, Stack } from 'expo-router';
+import * as SplashScreen from 'expo-splash-screen';
+import { useEffect } from 'react';
+import Toast from 'react-native-toast-message';
+// import { AuthContext } from '@/contexts';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
-export default function RootLayout() {
+export default () => {
+  // const { AuthProvider } = AuthContext;
+
   const [loaded, error] = useFonts({
     Poppins400: Poppins_400Regular,
     Poppins500: Poppins_500Medium,
@@ -29,9 +33,52 @@ export default function RootLayout() {
   }
 
   return (
+    // <AuthProvider>
+    //   <RootLayout />
+    //   <Toast />
+    // </AuthProvider>
+
+    <>
+      <RootLayout />
+      <Toast />
+    </>
+  );
+};
+
+const RootLayout = () => {
+  // const { user, isLoading } = AuthContext.useAuth();
+
+  // const router = useRouter();
+  // const segments = useSegments();
+
+  // useEffect(() => {
+  //   if (isLoading) return;
+
+  //   const inAuthGroup = segments[0] === '(auth)';
+
+  //   if (user && !inAuthGroup) {
+  //     router.replace('/(auth)/search');
+  //   } else if (!user && inAuthGroup) {
+  //     router.replace('/');
+  //   }
+  // }, [user, isLoading]);
+
+  // if (isLoading) {
+  //   return (
+  //     <View style={styles.loadingContainer}>
+  //       <ActivityIndicator size='large' color={colors.light.accent} />
+  //       <Text>Loading...</Text>
+  //     </View>
+  //   );
+  // }
+
+  // return <Slot />;
+
+  return (
     <Stack>
-      <Stack.Screen name="index" />
-      <Stack.Screen name="+not-found" />
+      <Stack.Screen name='index' />
+      <Stack.Screen name='+not-found' />
+      <Toast />
     </Stack>
   );
-}
+};
