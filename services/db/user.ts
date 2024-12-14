@@ -1,30 +1,81 @@
-import { firestore } from '@/utils';
 import { type TUser } from '@/types';
+import { toast } from '@/managers';
+import { crudMethods } from './crudMethods';
+import { queryMethods } from './queryMethods';
 
-const { crudMethods } = firestore;
+// INFO: Trigger the display of all kinds of toasts here ? -- yes
 
-const create = (data: TUser) => {
-  // if (keyof typeof data !== keyof typeof TUser) {
-  // 	throw new Error("Data must be an TUser object");
-  // }
+// INFO: called on the services.auth.register
+const create = async (data: TUser): Promise<string | null> => {
+  const existingDocs = await queryMethods.getDocumentsWhere<TUser>(
+    'USER_COLLECTION',
+    'email',
+    '==',
+    data.email
+  );
 
-  crudMethods.createDocument('USER_COLLECTION', data);
+  // TODO: Try/Catch to get the new Error(); ???
+  if (existingDocs && existingDocs.length > 0) {
+    // console.error('Document already exists with UID: ', data.uid);
+    console.error('Document already exists with email:', data.email);
+    throw new Error(`User with email ${data.email} already exists.`);
+    // Return this error to the user then he change the email
+    // return;
+
+    toast.error('User with email already exists.');
+  }
+
+  const docUid = await crudMethods.createDocument<TUser>(
+    'USER_COLLECTION',
+    data
+  );
+  return docUid;
 };
 
-const read = (docUid: string) => {
-  crudMethods.getDocument('USER_COLLECTION', docUid);
+const get = async (docUid: string): Promise<TUser | null> => {
+  const user = await crudMethods.getDocument<TUser>('USER_COLLECTION', docUid);
+  return user;
 };
 
-const me = (docUid: string) => {
-  crudMethods.getDocument('USER_COLLECTION', docUid);
+const getAll = async (): Promise<TUser[] | null> => {
+  const users = await crudMethods.getDocuments<TUser>('USER_COLLECTION');
+  return users;
 };
 
-const update = (docUid: string, data: Partial<TUser>) => {
-  crudMethods.updateDocument('USER_COLLECTION', docUid, data);
+// TODO: test this method
+const me = async (docUid: string) => {
+  try {
+    const user = await crudMethods.getDocument<TUser>(
+      'USER_COLLECTION',
+      docUid
+    );
+
+    return user;
+  } catch (error) {
+    console.error('Error fetching user data:', error.message);
+    return null;
+  }
 };
 
-const remove = (docUid: string) => {
-  crudMethods.deleteDocument('USER_COLLECTION', docUid);
+const update = async (docUid: string, data: Partial<TUser>): Promise<void> => {
+  if (data.email) {
+    const existingDocs = await queryMethods.getDocumentsWhere<TUser>(
+      'USER_COLLECTION',
+      'email',
+      '==',
+      data.email
+    );
+
+    if (existingDocs && existingDocs.some((doc) => doc.docUid !== docUid)) {
+      throw new Error(`Email ${data.email} is already in use by another user.`);
+    }
+  }
+
+  await crudMethods.updateDocument('USER_COLLECTION', docUid, data);
 };
 
-export const user = { create, read, me, update, remove };
+const remove = async (docUid: string): Promise<void> => {
+  await crudMethods.removeDocument('USER_COLLECTION', docUid);
+};
+
+export const user = { create, get, getAll, me, update, remove };
