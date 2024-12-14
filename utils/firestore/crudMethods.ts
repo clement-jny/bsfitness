@@ -9,13 +9,14 @@ import {
   query,
   getDocs,
 } from 'firebase/firestore';
-import { firebaseConfig, firestore } from '@/utils';
+import { firebaseConfig } from '../firebase-config';
+import { collections } from './collections';
+import { converter } from './converter';
+import { TUser } from '@/types';
+// import { FirebaseError } from 'firebase/app';
 
 const { db } = firebaseConfig;
-const {
-  collections: { collectionsKeyValue, getCollectionValue },
-  queryMethods: { getDocumentsWhere },
-} = firestore;
+const { collectionsKeyValue, getCollectionValue } = collections;
 
 type TCollectionsKeys = keyof typeof collectionsKeyValue;
 
@@ -24,8 +25,6 @@ const getDocument = async <T extends DocumentData>(
   collectionKey: TCollectionsKeys,
   docUid: string
 ): Promise<T | null> => {
-  // const collectionRef = collection(db, getCollectionValue(collectionKey));
-
   const docRef = doc(db, getCollectionValue(collectionKey), docUid);
 
   try {
@@ -34,19 +33,19 @@ const getDocument = async <T extends DocumentData>(
     if (docSnap.exists()) {
       console.log('Document data:', docSnap.data());
 
-      // return docSnap.data() as T;
       return { docUid: docSnap.id, ...(docSnap.data() as T) };
     } else {
       // doc.data() will be undefined in this case
       console.log('No such document!');
       return null;
     }
-  } catch (error) {
-    console.error('Error getting document:', error);
+  } catch (e) {
+    console.error('Error getting document:', e);
     return null;
   }
 };
 
+// INFO: maybe not needed
 // TODO: better error handling
 const getDocuments = async <T extends DocumentData>(
   collectionKey: TCollectionsKeys
@@ -57,9 +56,9 @@ const getDocuments = async <T extends DocumentData>(
   try {
     const querySnapshot = await getDocs(q);
 
-    const documents: T[] = querySnapshot.docs.map((doc) => ({
-      docUid: doc.id,
-      ...(doc.data() as T),
+    const documents: T[] = querySnapshot.docs.map((docSnap) => ({
+      docUid: docSnap.id,
+      ...(docSnap.data() as T),
     }));
 
     return documents;
@@ -69,65 +68,50 @@ const getDocuments = async <T extends DocumentData>(
   }
 };
 
-// TODO: check if data already exists before addDoc
 // TODO: better error handling
-const createDocument = async (
+const createDocument = async <T extends DocumentData>(
   collectionKey: TCollectionsKeys,
-  data: DocumentData
-): Promise<void> => {
+  data: T
+): Promise<string | null> => {
   const collectionRef = collection(db, getCollectionValue(collectionKey));
 
   try {
-    const existingDocs = await getDocumentsWhere(
-      collectionKey,
-      'uid',
-      '==',
-      data.uid
-    );
-
-    if (existingDocs && existingDocs.length > 0) {
-      console.error('Document already exists with UID: ', data.uid);
-      return;
-    }
-
     const docRef = await addDoc(collectionRef, data);
 
     console.log('Document written with UID: ', docRef.id);
 
-    // return docRef.id;
+    return docRef.id;
   } catch (e) {
     console.error('Error adding document: ', e);
+    return null;
   }
 };
 
-// TODO: check if data already exists before updateDoc
 // TODO: better error handling
-const updateDocument = async (
+// const userConverter = converter.genericConverter<TUser>();
+// extends DocumentData
+const updateDocument = async <T>(
   collectionKey: TCollectionsKeys,
   docUid: string,
-  data: Partial<DocumentData>
+  data: Partial<T>
 ): Promise<void> => {
-  // const collectionRef = collection(db, getCollectionValue(collectionKey));
-
   const docRef = doc(db, getCollectionValue(collectionKey), docUid);
+  // .withConverter(userConverter);
+  // .withConverter(genericConverter<T>());
 
   try {
     await updateDoc(docRef, data);
-
-    console.log('Document updated with UID: ', docUid);
+    // console.log(data);
   } catch (e) {
     console.error('Error updating document: ', e);
   }
 };
 
-// TODO: check if data already exists before deleteDoc
 // TODO: better error handling
-const deleteDocument = async (
+const removeDocument = async (
   collectionKey: TCollectionsKeys,
   docUid: string
 ): Promise<void> => {
-  // const collectionRef = collection(db, getCollectionValue(collectionKey));
-
   const docRef = doc(db, getCollectionValue(collectionKey), docUid);
 
   try {
@@ -144,5 +128,5 @@ export const crudMethods = {
   getDocuments,
   createDocument,
   updateDocument,
-  deleteDocument,
+  removeDocument,
 };
