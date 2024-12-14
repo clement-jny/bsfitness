@@ -5,11 +5,12 @@ import {
   where,
   getDocs,
 } from 'firebase/firestore';
-import { firebaseConfig } from '../firebase-config';
-import { collections } from './collections';
+import { firebaseConfig } from '@/utils';
+import { firestore } from '@/utils';
 import { type WhereFilterOp, limit } from 'firebase/firestore';
 
 const { db } = firebaseConfig;
+const { collections, converter } = firestore;
 const { collectionsKeyValue, getCollectionValue } = collections;
 
 type TCollectionsKeys = keyof typeof collectionsKeyValue;

@@ -9,13 +9,14 @@ import {
   query,
   getDocs,
 } from 'firebase/firestore';
-import { firebaseConfig } from '../firebase-config';
-import { collections } from './collections';
-import { converter } from './converter';
-import { TUser } from '@/types';
+
+import { firebaseConfig } from '@/utils';
+import { firestore } from '@/utils';
+// import { TUser } from '@/types';
 // import { FirebaseError } from 'firebase/app';
 
 const { db } = firebaseConfig;
+const { collections, converter } = firestore;
 const { collectionsKeyValue, getCollectionValue } = collections;
 
 type TCollectionsKeys = keyof typeof collectionsKeyValue;
