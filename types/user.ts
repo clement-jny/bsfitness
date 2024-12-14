@@ -1,8 +1,14 @@
+import { FieldValue } from 'firebase/firestore';
+
 type TUser = {
-  name: string;
   email: string;
   password: string;
-  age: number;
+
+  lastname: string;
+  firstname: string;
+
+  createdAt: FieldValue;
+  updatedAt: FieldValue;
 };
 
 export { TUser };
