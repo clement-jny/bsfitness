@@ -20,7 +20,7 @@ const show = (type: ToastType, title: string, message?: string) => {
   });
 };
 
-export const ToastManager = {
+export const toast = {
   show,
   success: (title: string, message?: string): void =>
     show('success', title, message),
