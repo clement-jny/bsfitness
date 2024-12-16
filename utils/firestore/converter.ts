@@ -38,3 +38,10 @@ export const converter = { genericConverter };
 //     return data as T;
 //   },
 // });
+
+// const genericConverter = <T>() =>
+//   ({
+//     toFirestore: (data: Partial<T>) => data, // Transforme les données avant envoi
+//     fromFirestore: (snapshot: FirebaseFirestore.QueryDocumentSnapshot): T =>
+//       snapshot.data() as T, // Récupère les données typées
+//   } as FirestoreDataConverter<T>);
