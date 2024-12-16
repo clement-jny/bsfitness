@@ -23,7 +23,7 @@ const firebaseErrorMessages: TFirebaseErrorMessages = {
   //   [AuthErrorCodes.EMAIL_ALREADY_IN_USE]: 'Cette adresse email est déjà utilisée.',
 };
 
-export const getFirebaseErrorMessage = (errorCode: string): string => {
+const getFirebaseErrorMessage = (errorCode: string): string => {
   return (
     firebaseErrorMessages[errorCode] || "Une erreur inconnue s'est produite."
   );
@@ -41,7 +41,7 @@ const firestoreErrorMessages: TFirestoreErrorMessages = {
   unavailable: 'Le service Firestore est temporairement indisponible.',
 };
 
-export const getFirestoreErrorMessage = (errorCode: string): string => {
+const getFirestoreErrorMessage = (errorCode: string): string => {
   return (
     firestoreErrorMessages[errorCode] || "Une erreur inconnue s'est produite."
   );
