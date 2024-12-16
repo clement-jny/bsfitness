@@ -1,6 +1,12 @@
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "strict": true
+    "strict": true,
+    "paths": {
+      "@/managers": ["./managers"],
+      "@/services": ["./services"],
+      "@/types": ["./types"],
+      "@/utils": ["./utils"]
+    }
   }
 }
