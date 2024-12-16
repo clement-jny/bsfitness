@@ -1,9 +1,6 @@
 import { type TUser } from '@/types';
-import { toast } from '@/managers';
 import { crudMethods } from './crudMethods';
 import { queryMethods } from './queryMethods';
-
-// INFO: Trigger the display of all kinds of toasts here ? -- yes
 
 // INFO: called on the services.auth.register
 const create = async (data: TUser): Promise<string | null> => {
@@ -21,8 +18,6 @@ const create = async (data: TUser): Promise<string | null> => {
     throw new Error(`User with email ${data.email} already exists.`);
     // Return this error to the user then he change the email
     // return;
-
-    toast.error('User with email already exists.');
   }
 
   const docUid = await crudMethods.createDocument<TUser>(
@@ -43,6 +38,7 @@ const getAll = async (): Promise<TUser[] | null> => {
 };
 
 // TODO: test this method
+// INFO: get the docUid from the AuthContext
 const me = async (docUid: string) => {
   try {
     const user = await crudMethods.getDocument<TUser>(
