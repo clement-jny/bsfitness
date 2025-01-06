@@ -8,6 +8,7 @@ import { Slot, Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import Toast from 'react-native-toast-message';
+import CustomLayout from './customLayout';
 // import { AuthContext } from '@/contexts';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -75,10 +76,12 @@ const RootLayout = () => {
   // return <Slot />;
 
   return (
-    <Stack>
-      <Stack.Screen name='index' />
-      <Stack.Screen name='+not-found' />
-      <Toast />
+    <Stack screenOptions={{ animation: 'fade', headerShown: true }}>
+      {/* <Stack.Screen
+        name='index'
+        options={{ title: 'BS-Fitness', headerShown: false }}
+      /> */}
+      {/* <Stack.Screen name='+not-found' /> */}
     </Stack>
   );
 };
