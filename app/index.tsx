@@ -27,21 +27,9 @@ const Index = () => {
         </View>
 
         <View style={styles.containerButtons}>
-          <Pressable
-            onPress={() => {
-              console.log('navigate to register');
-            }}
-            style={({ pressed }) => [
-              {
-                // backgroundColor: pressed
-                //   ? // ? colors.light.secondary
-                //     'rgba(0, 0, 0, 0.2)'
-                //   : colors.light.green,
-              },
-              styles.headingButton,
-            ]}>
+          <Link href={'/register'} style={styles.headingButton}>
             <Text style={styles.buttonText}>Get started</Text>
-          </Pressable>
+          </Link>
 
           <View style={{ flexDirection: 'row', gap: 5 }}>
             <Text style={styles.secondaryText}>Already have an account?</Text>
@@ -91,15 +79,11 @@ const styles = StyleSheet.create({
   },
   headingButton: {
     backgroundColor: colors.light.green,
-    width: 212,
-    // height: 50,
     paddingHorizontal: 60,
     paddingVertical: 13,
     borderRadius: 30,
   },
   buttonText: {
-    width: 93,
-    height: 24,
     fontFamily: 'Poppins700',
     fontSize: 16,
     lineHeight: 24,
