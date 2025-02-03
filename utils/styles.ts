@@ -7,4 +7,22 @@ const base = StyleSheet.create({
   },
 });
 
-export const styles = { base };
+const texts = StyleSheet.create({
+  title: {
+    fontFamily: 'Poppins700',
+    fontSize: 24,
+    lineHeight: 36,
+  },
+  regular: {
+    fontFamily: 'Poppins500',
+    fontSize: 16,
+    lineHeight: 24,
+  },
+  regularBold: {
+    fontFamily: 'Poppins700',
+    fontSize: 16,
+    lineHeight: 24,
+  },
+});
+
+export const styles = { base, texts };
