@@ -1,11 +1,4 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  ImageBackground,
-  Pressable,
-  Image,
-} from 'react-native';
+import { View, Text, StyleSheet, ImageBackground, Image } from 'react-native';
 import { Link } from 'expo-router';
 import { colors } from '@/utils';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -78,7 +71,7 @@ const styles = StyleSheet.create({
     paddingTop: 5,
   },
   headingButton: {
-    backgroundColor: colors.light.green,
+    backgroundColor: colors.light.primary,
     paddingHorizontal: 60,
     paddingVertical: 13,
     borderRadius: 30,
@@ -101,7 +94,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins500',
     fontSize: 16,
     lineHeight: 24,
-    color: colors.light.green,
+    color: colors.light.primary,
   },
 });
 
