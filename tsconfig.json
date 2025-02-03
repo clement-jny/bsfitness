@@ -3,9 +3,11 @@
   "compilerOptions": {
     "strict": true,
     "paths": {
+      "@/components": ["./components"],
+      "@/contexts": ["./contexts"],
       "@/managers": ["./managers"],
       "@/services": ["./services"],
-      "@/types": ["./types"],
+      "@/types/*": ["./types/*"],
       "@/utils": ["./utils"]
     }
   }
