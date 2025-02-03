@@ -2,7 +2,12 @@ import { firebaseConfig } from '@/utils';
 import { FirebaseError } from 'firebase/app';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { user } from '../db';
-import { type TUser } from '@/types';
+import {
+  type TUser,
+  type TNewUserDTO,
+  type TUpdateUserDTO,
+} from '@/types/user';
+import { serverTimestamp } from 'firebase/firestore';
 
 type TRegisterReturn = {
   success: boolean;
@@ -13,7 +18,7 @@ type TRegisterReturn = {
 const register = async (
   email: string,
   password: string,
-  newUserData: TUser
+  newUserData: Pick<TNewUserDTO, 'lastname' | 'firstname'>
 ): Promise<TRegisterReturn> => {
   try {
     const userCredential = await createUserWithEmailAndPassword(
@@ -31,7 +36,13 @@ const register = async (
     console.log('Register :: userCredential.user.uid', userCredential.user.uid);
 
     // TODO: pass the uid to the user.create method
-    await user.create(newUserData);
+    const newUser: TNewUserDTO = {
+      userUid: userCredential.user.uid,
+      ...newUserData,
+      email,
+      createdAt: serverTimestamp(),
+    };
+    await user.create(newUser);
 
     return {
       success: true,

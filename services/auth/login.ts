@@ -20,8 +20,8 @@ const login = async (
     );
 
     // TODO: remove these console.log and remove the returned user. User will be add in the AuthContext
-    console.log('Login :: userCredential', userCredential);
-    console.log('Login :: userCredential.user', userCredential.user);
+    // console.log('Login :: userCredential', userCredential);
+    // console.log('Login :: userCredential.user', userCredential.user);
 
     return {
       success: true,
