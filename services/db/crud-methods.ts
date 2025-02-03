@@ -8,6 +8,7 @@ import {
   DocumentData,
   query,
   getDocs,
+  setDoc,
 } from 'firebase/firestore';
 
 import { firebaseConfig } from '@/utils';
