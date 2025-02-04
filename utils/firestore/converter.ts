@@ -6,23 +6,26 @@ import {
   type FirestoreDataConverter,
 } from 'firebase/firestore';
 
-// Interface générique pour les objets avec timestamps
+// Generic interface for object with timestamp
 interface IFirestoreBase {
   createdAt?: Timestamp;
   updatedAt?: Timestamp;
 }
 
-// Converter générique avec gestion des timestamps
+// Generic converter with timestamp
 const genericConverter = <
   T extends IFirestoreBase
 >(): FirestoreDataConverter<T> => ({
+  // Automatic add of createdAt & updateAt for inserting
   toFirestore: (data: T) => {
     return {
       ...data,
-      createdAt: data.createdAt ?? serverTimestamp(), // Définit `createdAt` si absent
-      updatedAt: serverTimestamp(), // Met à jour `updatedAt` à chaque sauvegarde
+      createdAt: data.createdAt ?? serverTimestamp(), // Define `createdAt` if missing
+      updatedAt: serverTimestamp(), // Update `updatedAt` at each save
     };
   },
+
+  // Automatic add of docUid, createdAt & updateAt for reading
   fromFirestore: (
     snapshot: QueryDocumentSnapshot<T>,
     options?: SnapshotOptions
@@ -31,9 +34,9 @@ const genericConverter = <
 
     return {
       ...data,
-      id: snapshot.id, // Ajoute l'ID Firestore
-      createdAt: data.createdAt ? data.createdAt.toDate() : new Date(),
-      updatedAt: data.updatedAt ? data.updatedAt.toDate() : new Date(),
+      docUid: snapshot.id, // Add Firestore document ID
+      createdAt: data.createdAt ? data.createdAt.toDate() : new Date(), // get just .toDate()?
+      updatedAt: data.updatedAt ? data.updatedAt.toDate() : new Date(), // get just .toDate()?
     };
   },
 });
