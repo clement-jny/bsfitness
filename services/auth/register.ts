@@ -2,12 +2,7 @@ import { firebaseConfig } from '@/utils';
 import { FirebaseError } from 'firebase/app';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { user } from '../db';
-import {
-  type TUser,
-  type TNewUserDTO,
-  type TUpdateUserDTO,
-} from '@/types/user';
-import { serverTimestamp } from 'firebase/firestore';
+import { type TNewUserDTO } from '@/types/user';
 
 type TRegisterReturn = {
   success: boolean;
@@ -21,6 +16,8 @@ const register = async (
   newUserData: Pick<TNewUserDTO, 'lastname' | 'firstname'>
 ): Promise<TRegisterReturn> => {
   try {
+    // INFO: trigger AuthContext and save userUid
+    // TODO: don't want to trigger the context now
     const userCredential = await createUserWithEmailAndPassword(
       firebaseConfig.auth,
       email,
@@ -30,23 +27,22 @@ const register = async (
     console.log('Register :: userCredential', userCredential);
     console.log('Register :: userCredential.user', userCredential.user);
 
-    // const uid = userCredential.user.uid;
     // TODO: save uid into AuthContext
     console.log('Register :: newUserData', newUserData);
     console.log('Register :: userCredential.user.uid', userCredential.user.uid);
 
-    // TODO: pass the uid to the user.create method
     const newUser: TNewUserDTO = {
-      userUid: userCredential.user.uid,
+      authUid: userCredential.user.uid,
       ...newUserData,
       email,
-      createdAt: serverTimestamp(),
     };
-    await user.create(newUser);
+
+    const docUid = await user.create(newUser);
 
     return {
       success: true,
       user: userCredential.user,
+      errorCode: docUid ?? '',
     };
   } catch (error: unknown) {
     const err = error as FirebaseError;
