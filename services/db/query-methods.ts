@@ -15,18 +15,13 @@ const { collectionsKeyValue, getCollectionValue } = collections;
 
 type TCollectionsKeys = keyof typeof collectionsKeyValue;
 
-type TFirestoreDocument<T> = {
-  docUid: string;
-  data: T;
-};
-
 // TODO: better error handling
 const getDocumentWhere = async <T extends DocumentData>(
   collectionKey: TCollectionsKeys,
   field: keyof T,
   operator: WhereFilterOp,
   value: string | number | boolean
-): Promise<TFirestoreDocument<T> | null> => {
+): Promise<T | null> => {
   const collectionRef = collection(
     db,
     getCollectionValue(collectionKey)
@@ -38,17 +33,13 @@ const getDocumentWhere = async <T extends DocumentData>(
     limit(1)
   );
 
-  // How to get only one document?
   try {
     const querySnapshot = await getDocs(q);
     if (querySnapshot.empty) return null;
 
     const doc = querySnapshot.docs[0];
 
-    return {
-      docUid: doc.id,
-      data: doc.data() as T,
-    };
+    return doc.data() as T;
   } catch (e) {
     console.error('Error getting documents: ', e);
     return null;
@@ -61,8 +52,7 @@ const getDocumentsWhere = async <T extends DocumentData>(
   field: keyof T,
   operator: WhereFilterOp,
   value: string | number | boolean
-): Promise<TFirestoreDocument<T>[] | null> => {
-  // const collectionRef = collection(db, getCollectionValue(collectionKey));
+): Promise<T[] | null> => {
   const collectionRef = collection(
     db,
     getCollectionValue(collectionKey)
@@ -74,10 +64,7 @@ const getDocumentsWhere = async <T extends DocumentData>(
     const querySnapshot = await getDocs(q);
     if (querySnapshot.empty) return null;
 
-    return querySnapshot.docs.map((doc) => ({
-      docUid: doc.id,
-      data: doc.data() as T,
-    }));
+    return querySnapshot.docs.map((doc) => doc.data() as T);
   } catch (e) {
     console.error('Error getting documents: ', e);
     return null;
