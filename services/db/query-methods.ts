@@ -15,14 +15,23 @@ const { collectionsKeyValue, getCollectionValue } = collections;
 
 type TCollectionsKeys = keyof typeof collectionsKeyValue;
 
+type TFirestoreDocument<T> = {
+  docUid: string;
+  data: T;
+};
+
 // TODO: better error handling
 const getDocumentWhere = async <T extends DocumentData>(
   collectionKey: TCollectionsKeys,
   field: keyof T,
   operator: WhereFilterOp,
   value: string | number | boolean
-): Promise<T | null> => {
-  const collectionRef = collection(db, getCollectionValue(collectionKey));
+): Promise<TFirestoreDocument<T> | null> => {
+  const collectionRef = collection(
+    db,
+    getCollectionValue(collectionKey)
+  ).withConverter(converter.genericConverter<T>());
+
   const q = query(
     collectionRef,
     where(field as string, operator, value),
@@ -32,14 +41,14 @@ const getDocumentWhere = async <T extends DocumentData>(
   // How to get only one document?
   try {
     const querySnapshot = await getDocs(q);
+    if (querySnapshot.empty) return null;
 
-    // How to add the key 'data' ?
-    const documents: T[] = querySnapshot.docs.map((doc) => ({
+    const doc = querySnapshot.docs[0];
+
+    return {
       docUid: doc.id,
-      ...(doc.data() as T),
-    }));
-
-    return documents[0];
+      data: doc.data() as T,
+    };
   } catch (e) {
     console.error('Error getting documents: ', e);
     return null;
@@ -52,20 +61,23 @@ const getDocumentsWhere = async <T extends DocumentData>(
   field: keyof T,
   operator: WhereFilterOp,
   value: string | number | boolean
-): Promise<T[] | null> => {
-  const collectionRef = collection(db, getCollectionValue(collectionKey));
+): Promise<TFirestoreDocument<T>[] | null> => {
+  // const collectionRef = collection(db, getCollectionValue(collectionKey));
+  const collectionRef = collection(
+    db,
+    getCollectionValue(collectionKey)
+  ).withConverter(converter.genericConverter<T>());
+
   const q = query(collectionRef, where(field as string, operator, value));
 
   try {
     const querySnapshot = await getDocs(q);
+    if (querySnapshot.empty) return null;
 
-    // How to add the key 'data' ?
-    const documents: T[] = querySnapshot.docs.map((doc) => ({
+    return querySnapshot.docs.map((doc) => ({
       docUid: doc.id,
-      ...(doc.data() as T),
+      data: doc.data() as T,
     }));
-
-    return documents;
   } catch (e) {
     console.error('Error getting documents: ', e);
     return null;
