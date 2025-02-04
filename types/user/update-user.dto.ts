@@ -1,9 +1,9 @@
-import { FieldValue } from 'firebase/firestore';
 import { TNewUserDTO } from './new-user.dto';
 
-type TUpdateUserDTO = Partial<TNewUserDTO> & {
-  id: string; // ID Firestore du document utilisateur (uid2)
-  updatedAt: FieldValue;
-};
+// type TUpdateUserDTO = Partial<TNewUserDTO> & {
+//   docUid: string; // ID Firestore du document utilisateur (uid2)
+// };
+type TUpdateUserDTO = Partial<TNewUserDTO> & {};
+// type TUpdateUserDTO = Partial<Omit<TNewUserDTO, 'authUid' | 'email'>> & {};
 
 export { TUpdateUserDTO };
