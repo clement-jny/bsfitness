@@ -8,12 +8,9 @@ import {
   DocumentData,
   query,
   getDocs,
-  setDoc,
 } from 'firebase/firestore';
-
 import { firebaseConfig } from '@/utils';
 import { firestore } from '@/utils';
-// import { TUser } from '@/types';
 // import { FirebaseError } from 'firebase/app';
 
 const { db } = firebaseConfig;
@@ -22,12 +19,21 @@ const { collectionsKeyValue, getCollectionValue } = collections;
 
 type TCollectionsKeys = keyof typeof collectionsKeyValue;
 
+// const handleFirestoreError = (operation: string, error: unknown) => {
+//   console.error(`Firestore ${operation} error:`, error);
+//   return null;
+// };
+
 // TODO: better error handling
 const getDocument = async <T extends DocumentData>(
   collectionKey: TCollectionsKeys,
   docUid: string
 ): Promise<T | null> => {
-  const docRef = doc(db, getCollectionValue(collectionKey), docUid);
+  const docRef = doc(
+    db,
+    getCollectionValue(collectionKey),
+    docUid
+  ).withConverter(converter.genericConverter<T>());
 
   try {
     const docSnap = await getDoc(docRef);
@@ -35,13 +41,14 @@ const getDocument = async <T extends DocumentData>(
     if (docSnap.exists()) {
       console.log('Document data:', docSnap.data());
 
-      return { docUid: docSnap.id, ...(docSnap.data() as T) };
+      return docSnap.data() as T;
     } else {
       // doc.data() will be undefined in this case
       console.log('No such document!');
       return null;
     }
   } catch (e) {
+    // return handleFirestoreError('getDocument', e);
     console.error('Error getting document:', e);
     return null;
   }
@@ -52,19 +59,19 @@ const getDocument = async <T extends DocumentData>(
 const getDocuments = async <T extends DocumentData>(
   collectionKey: TCollectionsKeys
 ): Promise<T[] | null> => {
-  const collectionRef = collection(db, getCollectionValue(collectionKey));
+  const collectionRef = collection(
+    db,
+    getCollectionValue(collectionKey)
+  ).withConverter(converter.genericConverter<T>());
+
   const q = query(collectionRef);
 
   try {
     const querySnapshot = await getDocs(q);
 
-    const documents: T[] = querySnapshot.docs.map((docSnap) => ({
-      docUid: docSnap.id,
-      ...(docSnap.data() as T),
-    }));
-
-    return documents;
+    return querySnapshot.docs.map((doc) => doc.data() as T);
   } catch (e) {
+    // return handleFirestoreError('getDocuments', e);
     console.error('Error getting documents: ', e);
     return null;
   }
@@ -75,7 +82,10 @@ const createDocument = async <T extends DocumentData>(
   collectionKey: TCollectionsKeys,
   data: T
 ): Promise<string | null> => {
-  const collectionRef = collection(db, getCollectionValue(collectionKey));
+  const collectionRef = collection(
+    db,
+    getCollectionValue(collectionKey)
+  ).withConverter(converter.genericConverter<T>());
 
   try {
     const docRef = await addDoc(collectionRef, data);
@@ -84,28 +94,30 @@ const createDocument = async <T extends DocumentData>(
 
     return docRef.id;
   } catch (e) {
+    // return handleFirestoreError('createDocument', e);
     console.error('Error adding document: ', e);
     return null;
   }
 };
 
 // TODO: better error handling
-// const userConverter = converter.genericConverter<TUser>();
-// extends DocumentData
 const updateDocument = async <T>(
   collectionKey: TCollectionsKeys,
   docUid: string,
   data: Partial<T>
-): Promise<void> => {
+): Promise<boolean> => {
   const docRef = doc(db, getCollectionValue(collectionKey), docUid);
-  // .withConverter(userConverter);
-  // .withConverter(genericConverter<T>());
 
   try {
     await updateDoc(docRef, data);
-    // console.log(data);
+
+    console.log(data);
+
+    return true;
   } catch (e) {
+    // return handleFirestoreError('updateDocument', e);
     console.error('Error updating document: ', e);
+    return false;
   }
 };
 
@@ -113,15 +125,19 @@ const updateDocument = async <T>(
 const removeDocument = async (
   collectionKey: TCollectionsKeys,
   docUid: string
-): Promise<void> => {
+): Promise<boolean> => {
   const docRef = doc(db, getCollectionValue(collectionKey), docUid);
 
   try {
     await deleteDoc(docRef);
 
     console.log('Document deleted with UID: ', docUid);
+
+    return true;
   } catch (e) {
+    // return handleFirestoreError('removeDocument', e);
     console.error('Error deleting document: ', e);
+    return false;
   }
 };
 
