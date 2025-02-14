@@ -2,6 +2,7 @@ import { firebaseConfig } from '@/utils';
 import { FirebaseError } from 'firebase/app';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 
+// TODO: common return type for auth.login/register/logout?
 type TLoginReturn = {
   success: boolean;
   user?: object;

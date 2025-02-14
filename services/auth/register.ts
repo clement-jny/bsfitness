@@ -2,8 +2,9 @@ import { firebaseConfig } from '@/utils';
 import { FirebaseError } from 'firebase/app';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { user } from '../db';
-import { type TNewUserDTO } from '@/types/user';
+import { type TNewUserDTO } from '@/types';
 
+// TODO: common return type for auth.login/register/logout?
 type TRegisterReturn = {
   success: boolean;
   user?: object;
