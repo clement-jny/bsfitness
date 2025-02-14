@@ -6,8 +6,9 @@
       "@/components": ["./components"],
       "@/contexts": ["./contexts"],
       "@/managers": ["./managers"],
+      "@/schema": ["./schema"],
       "@/services": ["./services"],
-      "@/types/*": ["./types/*"],
+      "@/types": ["./types"],
       "@/utils": ["./utils"]
     }
   }
