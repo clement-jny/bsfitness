@@ -1,3 +1,4 @@
+import { TUser } from '@/types';
 import {
   serverTimestamp,
   type QueryDocumentSnapshot,
@@ -41,4 +42,4 @@ const genericConverter = <
   },
 });
 
-export const converter = { genericConverter };
+export { genericConverter };
