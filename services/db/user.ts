@@ -1,8 +1,4 @@
-import {
-  type TUser,
-  type TNewUserDTO,
-  type TUpdateUserDTO,
-} from '@/types/user';
+import { type TUser, type TNewUserDTO, type TUpdateUserDTO } from '@/types';
 import { crudMethods } from './crud-methods';
 import { queryMethods } from './query-methods';
 
