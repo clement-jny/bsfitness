@@ -1,26 +1,40 @@
 import { z } from 'zod';
 
-// TODO: do better
-const registerSchema = z.object({
-  lastname: z
-    .string()
-    .min(2, { message: 'Your lastname must be 2 characters' })
-    .max(50),
-  firstname: z
-    .string()
-    .min(2, { message: 'Your firstname must be 2 characters' })
-    .max(50),
-  email: z
-    .string()
-    .min(2, { message: 'Your firstname must be 2 characters' })
-    .max(50)
-    .email(),
-  password: z.string().min(6, {
-    message: 'Your password must be 6 characters.',
-  }),
-  passwordConfirm: z.string().min(6, {
-    message: 'Your password must be 6 characters.',
-  }), // .refine()
-});
+const registerSchema = z
+  .object({
+    lastname: z
+      .string()
+      .min(2, { message: 'Your lastname must be at least 2 characters long' })
+      .max(50, { message: 'Your lastname must be at most 50 characters long' })
+      .trim(),
+    firstname: z
+      .string()
+      .min(2, { message: 'Your firstname must be at least 2 characters long' })
+      .max(50, { message: 'Your firstname must be at most 50 characters long' })
+      .trim(),
+    email: z.string().email({ message: 'Invalid email address' }).trim(),
+    password: z
+      .string()
+      .min(6, { message: 'Your password must be at least 6 characters long' })
+      .max(100, {
+        message: 'Your password must be at most 100 characters long',
+      })
+      .trim(),
+    passwordConfirm: z
+      .string()
+      .min(6, {
+        message:
+          'Your password confirmation must be at least 6 characters long',
+      })
+      .max(100, {
+        message:
+          'Your password confirmation must be at most 100 characters long',
+      })
+      .trim(),
+  })
+  .refine((data) => data.password === data.passwordConfirm, {
+    path: ['passwordConfirm'],
+    message: "Passwords don't match",
+  });
 
 export { registerSchema };
