@@ -9,15 +9,10 @@ import {
   query,
   getDocs,
 } from 'firebase/firestore';
-import { firebaseConfig } from '@/utils';
-import { firestore } from '@/utils';
+import { firebaseConfig, firestore } from '@/utils';
+import { TCollectionsKeys } from '@/types';
+
 // import { FirebaseError } from 'firebase/app';
-
-const { db } = firebaseConfig;
-const { collections, converter } = firestore;
-const { collectionsKeyValue, getCollectionValue } = collections;
-
-type TCollectionsKeys = keyof typeof collectionsKeyValue;
 
 // const handleFirestoreError = (operation: string, error: unknown) => {
 //   console.error(`Firestore ${operation} error:`, error);
@@ -30,10 +25,10 @@ const getDocument = async <T extends DocumentData>(
   docUid: string
 ): Promise<T | null> => {
   const docRef = doc(
-    db,
-    getCollectionValue(collectionKey),
+    firebaseConfig.db,
+    firestore.collections.getCollectionValue(collectionKey),
     docUid
-  ).withConverter(converter.genericConverter<T>());
+  ).withConverter(firestore.genericConverter<T>());
 
   try {
     const docSnap = await getDoc(docRef);
@@ -60,9 +55,9 @@ const getDocuments = async <T extends DocumentData>(
   collectionKey: TCollectionsKeys
 ): Promise<T[] | null> => {
   const collectionRef = collection(
-    db,
-    getCollectionValue(collectionKey)
-  ).withConverter(converter.genericConverter<T>());
+    firebaseConfig.db,
+    firestore.collections.getCollectionValue(collectionKey)
+  ).withConverter(firestore.genericConverter<T>());
 
   const q = query(collectionRef);
 
@@ -83,9 +78,9 @@ const createDocument = async <T extends DocumentData>(
   data: T
 ): Promise<string | null> => {
   const collectionRef = collection(
-    db,
-    getCollectionValue(collectionKey)
-  ).withConverter(converter.genericConverter<T>());
+    firebaseConfig.db,
+    firestore.collections.getCollectionValue(collectionKey)
+  ).withConverter(firestore.genericConverter<T>());
 
   try {
     const docRef = await addDoc(collectionRef, data);
@@ -106,7 +101,11 @@ const updateDocument = async <T>(
   docUid: string,
   data: Partial<T>
 ): Promise<boolean> => {
-  const docRef = doc(db, getCollectionValue(collectionKey), docUid);
+  const docRef = doc(
+    firebaseConfig.db,
+    firestore.collections.getCollectionValue(collectionKey),
+    docUid
+  );
 
   try {
     await updateDoc(docRef, data);
@@ -126,7 +125,11 @@ const removeDocument = async (
   collectionKey: TCollectionsKeys,
   docUid: string
 ): Promise<boolean> => {
-  const docRef = doc(db, getCollectionValue(collectionKey), docUid);
+  const docRef = doc(
+    firebaseConfig.db,
+    firestore.collections.getCollectionValue(collectionKey),
+    docUid
+  );
 
   try {
     await deleteDoc(docRef);

@@ -5,15 +5,9 @@ import {
   where,
   getDocs,
 } from 'firebase/firestore';
-import { firebaseConfig } from '@/utils';
-import { firestore } from '@/utils';
+import { firebaseConfig, firestore } from '@/utils';
 import { type WhereFilterOp, limit } from 'firebase/firestore';
-
-const { db } = firebaseConfig;
-const { collections, converter } = firestore;
-const { collectionsKeyValue, getCollectionValue } = collections;
-
-type TCollectionsKeys = keyof typeof collectionsKeyValue;
+import { TCollectionsKeys } from '@/types';
 
 // TODO: better error handling
 const getDocumentWhere = async <T extends DocumentData>(
@@ -23,9 +17,9 @@ const getDocumentWhere = async <T extends DocumentData>(
   value: string | number | boolean
 ): Promise<T | null> => {
   const collectionRef = collection(
-    db,
-    getCollectionValue(collectionKey)
-  ).withConverter(converter.genericConverter<T>());
+    firebaseConfig.db,
+    firestore.collections.getCollectionValue(collectionKey)
+  ).withConverter(firestore.genericConverter<T>());
 
   const q = query(
     collectionRef,
@@ -54,9 +48,9 @@ const getDocumentsWhere = async <T extends DocumentData>(
   value: string | number | boolean
 ): Promise<T[] | null> => {
   const collectionRef = collection(
-    db,
-    getCollectionValue(collectionKey)
-  ).withConverter(converter.genericConverter<T>());
+    firebaseConfig.db,
+    firestore.collections.getCollectionValue(collectionKey)
+  ).withConverter(firestore.genericConverter<T>());
 
   const q = query(collectionRef, where(field as string, operator, value));
 
