@@ -7,7 +7,7 @@ import {
 } from 'react';
 import { firebaseConfig } from '@/utils';
 import { User } from 'firebase/auth';
-import { type TUser } from '@/types/user';
+import { type TUser } from '@/types';
 
 type TAuthProps = {
   user: User | null; // Connected User
