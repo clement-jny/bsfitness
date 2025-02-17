@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import {
   Keyboard,
   KeyboardAvoidingView,
@@ -7,7 +6,6 @@ import {
   SafeAreaView,
   StyleSheet,
   Text,
-  TextInput,
   View,
 } from 'react-native';
 import { useRouter } from 'expo-router';
@@ -15,43 +13,46 @@ import { colors, styles as s } from '@/utils';
 import { BackButton, Icons } from '@/components';
 import { toast } from '@/managers';
 import { auth } from '@/services';
+import { Controller, SubmitErrorHandler, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { registerSchema } from '@/schema';
+import { type TRegisterSchema } from '@/types';
+import { Input } from '@/components';
+
+// TODO: multi-steps form ?
+// INFO: email / pass / passConfirm
+// INFO: if ok, next step : lastname / firstname ( / profileImage ?)
+// INFO: if ok, go login / auto login ?
 
 const Register = () => {
   const router = useRouter();
 
-  const [lastname, setLastname] = useState('');
-  const [firstname, setFirstname] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const { handleSubmit, control } = useForm<TRegisterSchema>({
+    resolver: zodResolver(registerSchema),
+    mode: 'onBlur',
+  });
 
-  const handleRegister = async () => {
-    if (password !== confirmPassword) {
-      alert("Passwords don't match.");
-      return;
-    }
+  const onSubmit = async ({
+    email,
+    password,
+    lastname,
+    firstname,
+  }: TRegisterSchema) => {
+    // toast.success(`Welcome ${lastname} - ${firstname}`);
 
-    if (
-      email === '' ||
-      password === '' ||
-      lastname === '' ||
-      firstname === ''
-    ) {
-      toast.error('Please fill all the fields');
-      return;
-    }
-
-    console.log('Email:', email);
-    console.log('Password:', password);
-    console.log('Firstname:', firstname);
-    console.log('Lastname:', lastname);
-    toast.success(`Welcome ${lastname} - ${firstname}`);
+    // console.log(JSON.stringify(data));
 
     const result = await auth.register(email, password, {
       lastname,
       firstname,
     });
     console.log(result);
+  };
+
+  // TODO: keep?
+  const onError: SubmitErrorHandler<TRegisterSchema> = (errors, e) => {
+    // toast.error('Please fill all the fields');
+    // console.error(JSON.stringify(errors));
   };
 
   return (
@@ -72,44 +73,99 @@ const Register = () => {
             <Text style={styles.smallTitle}>Create an account.</Text>
 
             <View style={styles.inputs}>
-              <TextInput
-                style={styles.input}
-                value={lastname}
-                onChangeText={setLastname}
-                placeholder='Lastname'
-                placeholderTextColor={colors.light.text}
+              <Controller
+                control={control}
+                name='lastname'
+                render={({
+                  field: { onChange, onBlur, value },
+                  fieldState: { error },
+                }) => (
+                  <Input
+                    label='Lastname'
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    value={value}
+                    errorMessage={error?.message}
+                  />
+                )}
               />
-              <TextInput
-                style={styles.input}
-                value={firstname}
-                onChangeText={setFirstname}
-                placeholder='Firstname'
-                placeholderTextColor={colors.light.text}
+
+              <Controller
+                control={control}
+                name='firstname'
+                render={({
+                  field: { onChange, onBlur, value },
+                  fieldState: { error },
+                }) => (
+                  <Input
+                    label='Firstname'
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    value={value}
+                    errorMessage={error?.message}
+                  />
+                )}
               />
-              <TextInput
-                style={styles.input}
-                value={email}
-                onChangeText={setEmail}
-                placeholder='Email'
-                keyboardType='email-address'
-                placeholderTextColor={colors.light.text}
-                autoCapitalize='none'
+
+              <Controller
+                control={control}
+                name='email'
+                render={({
+                  field: { onChange, onBlur, value },
+                  fieldState: { error },
+                }) => (
+                  <Input
+                    label='Email'
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    value={value}
+                    errorMessage={error?.message}
+                    keyboardType='email-address'
+                  />
+                )}
               />
-              <TextInput
-                style={styles.input}
-                value={password}
-                onChangeText={setPassword}
-                placeholder='Password'
-                placeholderTextColor={colors.light.text}
-                autoCapitalize='none'
-                secureTextEntry
+
+              <Controller
+                control={control}
+                name='password'
+                render={({
+                  field: { onChange, onBlur, value },
+                  fieldState: { error },
+                }) => (
+                  <Input
+                    label='Password'
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    value={value}
+                    errorMessage={error?.message}
+                    secureTextEntry
+                  />
+                )}
+              />
+
+              <Controller
+                control={control}
+                name='passwordConfirm'
+                render={({
+                  field: { onChange, onBlur, value },
+                  fieldState: { error },
+                }) => (
+                  <Input
+                    label='Password confirm'
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    value={value}
+                    errorMessage={error?.message}
+                    secureTextEntry
+                  />
+                )}
               />
             </View>
 
             <View style={styles.buttons}>
               {/* // TODO: animated register btn with reanimated */}
               <Pressable
-                onPress={handleRegister}
+                onPress={handleSubmit(onSubmit, onError)}
                 style={({ pressed }) => [
                   pressed && { opacity: 0.2 },
                   styles.button,
@@ -169,13 +225,8 @@ const styles = StyleSheet.create({
   },
 
   inputs: {
-    gap: 10,
+    gap: 5,
     marginVertical: 25,
-  },
-  input: {
-    borderWidth: 1,
-    borderRadius: 8,
-    padding: 10,
   },
 
   buttons: {

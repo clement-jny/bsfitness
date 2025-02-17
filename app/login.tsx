@@ -15,30 +15,38 @@ import { colors, styles as s } from '@/utils';
 import { BackButton, Icons } from '@/components';
 import { toast } from '@/managers';
 import { auth } from '@/services';
+import { Controller, SubmitErrorHandler, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { loginSchema } from '@/schema';
+import { type TLoginSchema } from '@/types';
+import { Input } from '@/components';
 
 const Login = () => {
   const router = useRouter();
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const { handleSubmit, control } = useForm<TLoginSchema>({
+    resolver: zodResolver(loginSchema),
+    mode: 'onBlur',
+  });
 
-  const handleLogin = async () => {
-    if (email === '' || password === '') {
-      toast.error('Please fill all the fields');
-      return;
-    }
+  const onSubmit = async ({ email, password }: TLoginSchema) => {
+    //   toast.success(`Welcome ${email} - ${password}`);
 
-    console.log('Email:', email);
-    console.log('Password:', password);
-    toast.success(`Welcome ${email} - ${password}`);
+    // console.log(JSON.stringify(data));
 
     const result = await auth.login(email, password);
     console.log(result);
   };
 
-  const handleForgotPassword = () => {
-    toast.error('Soon : forgot your password');
+  // TODO: keep?
+  const onError: SubmitErrorHandler<TLoginSchema> = (errors, e) => {
+    // toast.error('Please fill all the fields');
+    // console.error(JSON.stringify(errors));
   };
+
+  // const handleForgotPassword = () => {
+  //   toast.error('Soon : forgot your password');
+  // };
 
   return (
     <SafeAreaView
@@ -59,29 +67,47 @@ const Login = () => {
             <Text style={styles.smallTitle}>Log in to your account.</Text>
 
             <View style={styles.inputs}>
-              <TextInput
-                style={styles.input}
-                value={email}
-                onChangeText={setEmail}
-                placeholder='Email'
-                keyboardType='email-address'
-                placeholderTextColor={colors.light.text}
-                autoCapitalize='none'
+              <Controller
+                control={control}
+                name='email'
+                render={({
+                  field: { onChange, onBlur, value },
+                  fieldState: { error },
+                }) => (
+                  <Input
+                    label='Email'
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    value={value}
+                    errorMessage={error?.message}
+                    keyboardType='email-address'
+                  />
+                )}
               />
-              <TextInput
-                style={styles.input}
-                value={password}
-                onChangeText={setPassword}
-                placeholder='Password'
-                placeholderTextColor={colors.light.text}
-                secureTextEntry
+
+              <Controller
+                control={control}
+                name='password'
+                render={({
+                  field: { onChange, onBlur, value },
+                  fieldState: { error },
+                }) => (
+                  <Input
+                    label='Password'
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    value={value}
+                    errorMessage={error?.message}
+                    secureTextEntry
+                  />
+                )}
               />
             </View>
 
             <View style={styles.buttons}>
               {/* // TODO: animated login btn with reanimated */}
               <Pressable
-                onPress={handleLogin}
+                onPress={handleSubmit(onSubmit, onError)}
                 style={({ pressed }) => [
                   pressed && { opacity: 0.2 },
                   styles.button,
@@ -91,9 +117,9 @@ const Login = () => {
               </Pressable>
 
               {/* TODO: animated btn */}
-              <Pressable onPress={handleForgotPassword}>
+              {/* <Pressable onPress={handleForgotPassword}>
                 <Text style={styles.linkText}>Forgot your password?</Text>
-              </Pressable>
+              </Pressable> */}
             </View>
 
             <View style={styles.registerZone}>
