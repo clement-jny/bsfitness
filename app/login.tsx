@@ -1,6 +1,4 @@
-import { useState } from 'react';
 import {
-  Image,
   Keyboard,
   KeyboardAvoidingView,
   Platform,
@@ -8,7 +6,6 @@ import {
   SafeAreaView,
   StyleSheet,
   Text,
-  TextInput,
   View,
 } from 'react-native';
 import { useRouter } from 'expo-router';
@@ -35,8 +32,8 @@ const Login = () => {
 
     // console.log(JSON.stringify(data));
 
-    // const result = await auth.login(email, password);
-    // console.log(result);
+    const result = await auth.login(email, password);
+    console.log(result);
   };
 
   // TODO: keep?
@@ -60,14 +57,8 @@ const Login = () => {
       {/* Main Content */}
       <KeyboardAvoidingView
         style={localStyles.wrapper}
-        // behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      >
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <Pressable onPress={Keyboard.dismiss} style={localStyles.inner}>
-          {/* <Image
-            source={require('../assets/images/logo.png')}
-            style={{ marginHorizontal: 'auto' }}
-          /> */}
-
           <Text style={[globalStyles.text.title, localStyles.title]}>
             Welcome back,
           </Text>
@@ -166,7 +157,6 @@ const localStyles = StyleSheet.create({
   wrapper: {
     flex: 1,
   },
-
   inner: {
     flex: 1,
     justifyContent: 'center',
@@ -186,11 +176,6 @@ const localStyles = StyleSheet.create({
   inputs: {
     gap: 10,
     marginVertical: 25,
-  },
-  input: {
-    borderWidth: 1,
-    borderRadius: 8,
-    padding: 10,
   },
 
   buttons: {
