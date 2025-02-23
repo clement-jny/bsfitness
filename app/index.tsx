@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, ImageBackground, Image } from 'react-native';
 import { Link } from 'expo-router';
-import { colors } from '@/utils';
+import { colors, styles as globalStyles } from '@/utils';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const Index = () => {
@@ -12,8 +12,10 @@ const Index = () => {
         <Image source={require('../assets/images/logo.png')} />
 
         <View style={styles.containerTexts}>
-          <Text style={styles.headingText}>Your personal sports coach</Text>
-          <Text style={styles.smallText}>
+          <Text style={[globalStyles.text.title, styles.headingText]}>
+            Your personal sports coach
+          </Text>
+          <Text style={[globalStyles.text.subtitle, styles.smallText]}>
             Learn with fitness experts, at your own pace, and 100% updated
             content.
           </Text>
@@ -21,13 +23,19 @@ const Index = () => {
 
         <View style={styles.containerButtons}>
           <Link href={'/register'} style={styles.headingButton}>
-            <Text style={styles.buttonText}>Get started</Text>
+            <Text style={[globalStyles.text.regularBold, styles.buttonText]}>
+              Get started
+            </Text>
           </Link>
 
           <View style={{ flexDirection: 'row', gap: 5 }}>
-            <Text style={styles.secondaryText}>Already have an account?</Text>
+            <Text style={[globalStyles.text.subtitle, styles.secondaryText]}>
+              Already have an account?
+            </Text>
 
-            <Link href={'/login'} style={styles.inlineButton}>
+            <Link
+              href={'/login'}
+              style={[globalStyles.text.subtitle, styles.inlineButton]}>
               Log In
             </Link>
           </View>
@@ -49,21 +57,15 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   headingText: {
-    width: 247,
-    fontFamily: 'Poppins700',
-    fontSize: 24,
-    lineHeight: 36,
+    width: 247, // TODO: keep?
     textAlign: 'center',
-    color: 'white',
+    color: colors.light.white, // TODO: use colorScheme
   },
   smallText: {
     width: 359,
-    fontFamily: 'Poppins500',
-    fontSize: 16,
-    lineHeight: 24,
-    color: 'white',
     textAlign: 'center',
-    opacity: 0.8,
+    color: colors.light.grey, // TODO: use colorScheme
+    // opacity: 0.8,
   },
   containerButtons: {
     alignItems: 'center',
@@ -71,30 +73,21 @@ const styles = StyleSheet.create({
     paddingTop: 5,
   },
   headingButton: {
-    backgroundColor: colors.light.primary,
+    backgroundColor: colors.light.primary, // TODO: use colorScheme
     paddingHorizontal: 60,
     paddingVertical: 13,
     borderRadius: 30,
   },
   buttonText: {
-    fontFamily: 'Poppins700',
-    fontSize: 16,
-    lineHeight: 24,
-    color: 'white',
+    color: colors.light.white, // TODO: use colorScheme
   },
   secondaryText: {
     // width: 256,
     // height: 24,
-    fontFamily: 'Poppins500',
-    fontSize: 16,
-    lineHeight: 24,
-    color: 'white',
+    color: colors.light.white, // TODO: use colorScheme
   },
   inlineButton: {
-    fontFamily: 'Poppins500',
-    fontSize: 16,
-    lineHeight: 24,
-    color: colors.light.primary,
+    color: colors.light.primary, // TODO: use colorScheme
   },
 });
 
