@@ -22,9 +22,9 @@ const baseColor: TBaseColor = {
   secondary: '#1F2E45', // lighter ?
   accent: '#e84579',
 
-  white: '#fff',
+  white: '#FDFEFF',
   black: '#000',
-  grey: '#9dafae',
+  grey: '#9CA3AF',
   orange: '#ffac38',
 };
 
