@@ -9,7 +9,7 @@ import {
   View,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { colors, styles as s } from '@/utils';
+import { colors, styles as globalStyles } from '@/utils';
 import { BackButton, Icons } from '@/components';
 import { toast } from '@/managers';
 import { auth } from '@/services';
@@ -17,7 +17,7 @@ import { Controller, SubmitErrorHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { registerSchema } from '@/schema';
 import { type TRegisterSchema } from '@/types';
-import { Input } from '@/components';
+import { FormInput } from '@/components';
 
 // TODO: multi-steps form ?
 // INFO: email / pass / passConfirm
@@ -38,7 +38,7 @@ const Register = () => {
     lastname,
     firstname,
   }: TRegisterSchema) => {
-    // toast.success(`Welcome ${lastname} - ${firstname}`);
+    toast.success(`Welcome ${lastname} ${firstname}`);
 
     // console.log(JSON.stringify(data));
 
@@ -58,133 +58,157 @@ const Register = () => {
   return (
     <SafeAreaView
       style={{
-        backgroundColor: 'lightblue',
+        backgroundColor: colors.light.background, // TODO: use colorScheme
         flex: 1,
-        // TODO: remove
       }}>
       <BackButton />
 
+      {/* Main Content */}
       <KeyboardAvoidingView
-        style={styles.container}
+        style={localStyles.wrapper}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-        <Pressable onPress={Keyboard.dismiss} style={styles.innerContainer}>
-          <View style={styles.content}>
-            <Text style={styles.title}>Welcome,</Text>
-            <Text style={styles.smallTitle}>Create an account.</Text>
+        <Pressable onPress={Keyboard.dismiss} style={localStyles.inner}>
+          <Text style={[globalStyles.text.title, localStyles.title]}>
+            Welcome,
+          </Text>
+          <Text style={[globalStyles.text.subtitle, localStyles.subtitle]}>
+            Create an account.
+          </Text>
 
-            <View style={styles.inputs}>
-              <Controller
-                control={control}
-                name='lastname'
-                render={({
-                  field: { onChange, onBlur, value },
-                  fieldState: { error },
-                }) => (
-                  <Input
-                    label='Lastname'
-                    onBlur={onBlur}
-                    onChangeText={onChange}
-                    value={value}
-                    errorMessage={error?.message}
-                  />
-                )}
+          <View style={localStyles.inputs}>
+            <Controller
+              control={control}
+              name='lastname'
+              render={({
+                field: { onChange, onBlur, value },
+                fieldState: { error },
+              }) => (
+                <FormInput
+                  label='Lastname'
+                  isRequired
+                  placeholder='Your lastname'
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  value={value}
+                  errorMessage={error?.message}
+                  // autoComplete='family-name'
+                />
+              )}
+            />
+
+            <Controller
+              control={control}
+              name='firstname'
+              render={({
+                field: { onChange, onBlur, value },
+                fieldState: { error },
+              }) => (
+                <FormInput
+                  label='Firstname'
+                  isRequired
+                  placeholder='Your firstname'
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  value={value}
+                  errorMessage={error?.message}
+                  // autoComplete='name'
+                />
+              )}
+            />
+
+            <Controller
+              control={control}
+              name='email'
+              render={({
+                field: { onChange, onBlur, value },
+                fieldState: { error },
+              }) => (
+                <FormInput
+                  label='Email'
+                  isRequired
+                  placeholder='Your email'
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  value={value}
+                  errorMessage={error?.message}
+                  keyboardType='email-address'
+                  // autoComplete='email'
+                />
+              )}
+            />
+
+            <Controller
+              control={control}
+              name='password'
+              render={({
+                field: { onChange, onBlur, value },
+                fieldState: { error },
+              }) => (
+                <FormInput
+                  label='Password'
+                  isRequired
+                  placeholder='Your secure password'
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  value={value}
+                  errorMessage={error?.message}
+                  secureTextEntry
+                  // autoComplete='new-password'
+                />
+              )}
+            />
+
+            {/* <Controller
+              control={control}
+              name='passwordConfirm'
+              render={({
+                field: { onChange, onBlur, value },
+                fieldState: { error },
+              }) => (
+                <FormInput
+                  label='Password confirm'
+                  isRequired
+                  placeholder='Your secure password'
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  value={value}
+                  errorMessage={error?.message}
+                  secureTextEntry
+                  // autoComplete='new-password'
+                />
+              )}
+            /> */}
+          </View>
+
+          <View style={localStyles.buttons}>
+            {/* // TODO: animated register btn with reanimated */}
+            <Pressable
+              onPress={handleSubmit(onSubmit, onError)}
+              style={({ pressed }) => [
+                globalStyles.base.button,
+                pressed && { opacity: 0.6 },
+                localStyles.button,
+              ]}>
+              <Text style={localStyles.buttonText}>Register</Text>
+              <Icons.Ionicons
+                name='log-in-outline'
+                size={20}
+                color={colors.light.white} // TODO: use colorScheme
               />
+            </Pressable>
+          </View>
 
-              <Controller
-                control={control}
-                name='firstname'
-                render={({
-                  field: { onChange, onBlur, value },
-                  fieldState: { error },
-                }) => (
-                  <Input
-                    label='Firstname'
-                    onBlur={onBlur}
-                    onChangeText={onChange}
-                    value={value}
-                    errorMessage={error?.message}
-                  />
-                )}
-              />
+          <View style={localStyles.loginZone}>
+            <Text style={{ color: colors.light.text }}>
+              Already have an account ?
+            </Text>
 
-              <Controller
-                control={control}
-                name='email'
-                render={({
-                  field: { onChange, onBlur, value },
-                  fieldState: { error },
-                }) => (
-                  <Input
-                    label='Email'
-                    onBlur={onBlur}
-                    onChangeText={onChange}
-                    value={value}
-                    errorMessage={error?.message}
-                    keyboardType='email-address'
-                  />
-                )}
-              />
-
-              <Controller
-                control={control}
-                name='password'
-                render={({
-                  field: { onChange, onBlur, value },
-                  fieldState: { error },
-                }) => (
-                  <Input
-                    label='Password'
-                    onBlur={onBlur}
-                    onChangeText={onChange}
-                    value={value}
-                    errorMessage={error?.message}
-                    secureTextEntry
-                  />
-                )}
-              />
-
-              <Controller
-                control={control}
-                name='passwordConfirm'
-                render={({
-                  field: { onChange, onBlur, value },
-                  fieldState: { error },
-                }) => (
-                  <Input
-                    label='Password confirm'
-                    onBlur={onBlur}
-                    onChangeText={onChange}
-                    value={value}
-                    errorMessage={error?.message}
-                    secureTextEntry
-                  />
-                )}
-              />
-            </View>
-
-            <View style={styles.buttons}>
-              {/* // TODO: animated register btn with reanimated */}
-              <Pressable
-                onPress={handleSubmit(onSubmit, onError)}
-                style={({ pressed }) => [
-                  pressed && { opacity: 0.2 },
-                  styles.button,
-                ]}>
-                <Text style={styles.buttonText}>Register</Text>
-                <Icons.Ionicons name='log-in-outline' size={20} color='white' />
-              </Pressable>
-            </View>
-
-            <View style={styles.registerZone}>
-              <Text>Already have an account ?</Text>
-
-              <Pressable
-                onPress={() => {
-                  router.replace('/login');
-                }}>
-                <Text>Login</Text>
-              </Pressable>
-            </View>
+            <Pressable
+              onPress={() => {
+                router.replace('/login');
+              }}>
+              <Text style={{ color: colors.light.text }}>Login</Text>
+            </Pressable>
           </View>
         </Pressable>
       </KeyboardAvoidingView>
@@ -192,46 +216,34 @@ const Register = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
+const localStyles = StyleSheet.create({
+  wrapper: {
     flex: 1,
-    // backgroundColor: '#fff',
   },
-
-  innerContainer: {
+  inner: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  content: {
-    width: '90%',
-    padding: 20,
-    backgroundColor: colors.light.background, // TODO: remove
-    borderWidth: 2, // TODO: remove
+    paddingHorizontal: 10,
   },
 
   title: {
-    fontFamily: 'Poppins700',
-    fontSize: 24,
-    lineHeight: 36,
-    color: colors.light.primary,
+    color: colors.light.primary, // TODO: use colorScheme
+    textAlign: 'center',
   },
-  smallTitle: {
-    fontFamily: 'Poppins500',
-    fontSize: 16,
-    lineHeight: 24,
-    opacity: 0.8,
+  subtitle: {
+    color: colors.light.grey, // TODO: use colorScheme
+    // opacity: 0.8,
+    textAlign: 'center',
   },
 
   inputs: {
-    gap: 5,
+    gap: 10,
     marginVertical: 25,
   },
 
   buttons: {
     gap: 5,
-    marginBottom: 10,
+    marginBottom: 15,
   },
   button: {
     padding: 12,
@@ -239,11 +251,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     gap: 5,
-    backgroundColor: colors.light.primary,
-    borderRadius: 8,
+    backgroundColor: colors.light.primary, // TODO: use colorScheme
   },
   buttonText: {
-    color: '#fff',
+    color: colors.light.white, // TODO: use colorScheme
     fontWeight: 'bold',
   },
   linkText: {
@@ -251,11 +262,10 @@ const styles = StyleSheet.create({
     textAlign: 'right',
   },
 
-  registerZone: {
+  loginZone: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 10,
   },
 });
 
