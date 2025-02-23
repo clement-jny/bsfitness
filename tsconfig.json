@@ -3,7 +3,10 @@
   "compilerOptions": {
     "strict": true,
     "paths": {
+      "@/components": ["./components"],
+      "@/contexts": ["./contexts"],
       "@/managers": ["./managers"],
+      "@/schema": ["./schema"],
       "@/services": ["./services"],
       "@/types": ["./types"],
       "@/utils": ["./utils"]

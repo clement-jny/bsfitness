@@ -1,30 +1,40 @@
-import { type TUser } from '@/types';
-import { crudMethods } from './crudMethods';
-import { queryMethods } from './queryMethods';
+import { type TUser, type TNewUserDTO, type TUpdateUserDTO } from '@/types';
+import { crudMethods } from './crud-methods';
+import { queryMethods } from './query-methods';
 
 // INFO: called on the services.auth.register
-const create = async (data: TUser): Promise<string | null> => {
-  const existingDocs = await queryMethods.getDocumentsWhere<TUser>(
-    'USER_COLLECTION',
-    'email',
-    '==',
-    data.email
-  );
+// Promise<TUser>
+const create = async (data: TNewUserDTO): Promise<string | null> => {
+  try {
+    const existingDocs = await queryMethods.getDocumentsWhere<TUser>(
+      'USER_COLLECTION',
+      'email',
+      '==',
+      data.email
+    );
 
-  // TODO: Try/Catch to get the new Error(); ???
-  if (existingDocs && existingDocs.length > 0) {
-    // console.error('Document already exists with UID: ', data.uid);
-    console.error('Document already exists with email:', data.email);
-    throw new Error(`User with email ${data.email} already exists.`);
-    // Return this error to the user then he change the email
-    // return;
+    if (existingDocs && existingDocs.length > 0) {
+      console.error('Document already exists with email:', data.email);
+      throw new Error(`User with email ${data.email} already exists.`);
+      // Return this error to the user then he change the email
+      // return;
+    }
+
+    const docUid = await crudMethods.createDocument<TNewUserDTO>(
+      'USER_COLLECTION',
+      data
+    );
+
+    if (!docUid) {
+      throw new Error('Failed to create user document in Firestore.');
+    }
+
+    return docUid;
+    // return { docUid: docUid, ...data, createdAt: new Date() };
+  } catch (error) {
+    console.error('Error creating user:', error);
+    throw error; // Permet de remonter l'erreur à `register.ts`
   }
-
-  const docUid = await crudMethods.createDocument<TUser>(
-    'USER_COLLECTION',
-    data
-  );
-  return docUid;
 };
 
 const get = async (docUid: string): Promise<TUser | null> => {
@@ -46,6 +56,11 @@ const me = async (docUid: string) => {
       docUid
     );
 
+    if (!user) {
+      console.warn(`User document with id ${docUid} not found.`);
+      return null;
+    }
+
     return user;
   } catch (error) {
     console.error('Error fetching user data:', error.message);
@@ -53,7 +68,8 @@ const me = async (docUid: string) => {
   }
 };
 
-const update = async (docUid: string, data: Partial<TUser>): Promise<void> => {
+// const update = async (docUid: string, data: Partial<TUser>): Promise<void> => {
+const update = async (docUid: string, data: TUpdateUserDTO): Promise<void> => {
   if (data.email) {
     const existingDocs = await queryMethods.getDocumentsWhere<TUser>(
       'USER_COLLECTION',
@@ -67,7 +83,11 @@ const update = async (docUid: string, data: Partial<TUser>): Promise<void> => {
     }
   }
 
-  await crudMethods.updateDocument('USER_COLLECTION', docUid, data);
+  await crudMethods.updateDocument<TUpdateUserDTO>(
+    'USER_COLLECTION',
+    docUid,
+    data
+  );
 };
 
 const remove = async (docUid: string): Promise<void> => {
