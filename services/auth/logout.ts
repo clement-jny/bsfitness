@@ -1,15 +1,10 @@
 import { firebaseConfig } from '@/utils';
 import { FirebaseError } from 'firebase/app';
 import { signOut } from 'firebase/auth';
+import { type TAuthReturn } from '@/types';
+import { error } from '@/managers';
 
-// TODO: common return type for auth.login/register/logout?
-type TLogoutReturn = {
-  success: boolean;
-  user?: object;
-  errorCode?: string;
-};
-
-const logout = async (): Promise<TLogoutReturn> => {
+const logout = async (): Promise<TAuthReturn> => {
   try {
     await signOut(firebaseConfig.auth);
 
@@ -17,15 +12,17 @@ const logout = async (): Promise<TLogoutReturn> => {
 
     return {
       success: true,
+      message: 'Logout successful!',
     };
-  } catch (error: unknown) {
-    const err = error as FirebaseError;
+  } catch (e: unknown) {
+    const err = e as FirebaseError;
 
-    console.error('Logout :: code:', err.code);
+    console.log('Logout :: code:', err.code);
+    console.log('[error logging out] ==>', err);
 
     return {
       success: false,
-      errorCode: err.code,
+      message: error.getFirebaseErrorMessage(err.code),
     };
   }
 };
