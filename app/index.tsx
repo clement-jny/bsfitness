@@ -8,34 +8,35 @@ const Index = () => {
     <ImageBackground
       source={require('../assets/images/background-start.png')}
       style={{ flex: 1 }}>
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={localStyles.container}>
         <Image source={require('../assets/images/logo.png')} />
 
-        <View style={styles.containerTexts}>
-          <Text style={[globalStyles.text.title, styles.headingText]}>
+        <View style={localStyles.containerTexts}>
+          <Text style={[globalStyles.text.title, localStyles.headingText]}>
             Your personal sports coach
           </Text>
-          <Text style={[globalStyles.text.subtitle, styles.smallText]}>
+          <Text style={[globalStyles.text.subtitle, localStyles.smallText]}>
             Learn with fitness experts, at your own pace, and 100% updated
             content.
           </Text>
         </View>
 
-        <View style={styles.containerButtons}>
-          {/* <Link href={'/register'} style={styles.headingButton}>
-            <Text style={[globalStyles.text.regularBold, styles.buttonText]}>
+        <View style={localStyles.containerButtons}>
+          {/* <Link href={'/register'} style={localStyles.headingButton}>
+            <Text style={[globalStyles.text.regularBold, localStyles.buttonText]}>
               Get started
             </Text>
           </Link> */}
 
           <View style={{ flexDirection: 'row', gap: 5 }}>
-            <Text style={[globalStyles.text.subtitle, styles.secondaryText]}>
+            <Text
+              style={[globalStyles.text.subtitle, localStyles.secondaryText]}>
               Already have an account?
             </Text>
 
             <Link
               href={'/login'}
-              style={[globalStyles.text.subtitle, styles.inlineButton]}>
+              style={[globalStyles.text.subtitle, localStyles.inlineButton]}>
               Log In
             </Link>
           </View>
@@ -45,7 +46,7 @@ const Index = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const localStyles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',

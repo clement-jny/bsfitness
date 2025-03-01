@@ -28,10 +28,10 @@ const Account = () => {
   }, []);
 
   return (
-    <View style={styles.container}>
+    <View style={localStyles.container}>
       {myUser ? (
         <>
-          <View style={styles.userInfo}>
+          <View style={localStyles.userInfo}>
             <Text>
               Welcome, {myUser.firstname} {myUser.lastname}
             </Text>
@@ -45,7 +45,7 @@ const Account = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const localStyles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 10,
