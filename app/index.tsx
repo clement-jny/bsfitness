@@ -22,11 +22,11 @@ const Index = () => {
         </View>
 
         <View style={styles.containerButtons}>
-          <Link href={'/register'} style={styles.headingButton}>
+          {/* <Link href={'/register'} style={styles.headingButton}>
             <Text style={[globalStyles.text.regularBold, styles.buttonText]}>
               Get started
             </Text>
-          </Link>
+          </Link> */}
 
           <View style={{ flexDirection: 'row', gap: 5 }}>
             <Text style={[globalStyles.text.subtitle, styles.secondaryText]}>
