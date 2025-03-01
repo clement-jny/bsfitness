@@ -8,12 +8,16 @@ import {
 import { firebaseConfig } from '@/utils';
 import { User } from 'firebase/auth';
 import { type TUser } from '@/types';
+// import { auth } from '@/services';
 
 type TAuthProps = {
   user: User | null; // Connected User
   // tUser: TUser | null;
   userId: string; // Connected user uid
   isLoading: boolean; // Chargement de l'utilisateur
+  // login: (email: string, password: string) => void;
+  // register: (email: string, password: string) => void;
+  // logout: () => void;
 };
 
 // Création du contexte avec une valeur par défaut `undefined`
@@ -31,22 +35,43 @@ const useAuth = () => {
 // Fournisseur de contexte pour gérer l'état d'authentification
 const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [tUser, setTUser] = useState<TUser | null>(null);
+  // const [tUser, setTUser] = useState<TUser | null>(null);
   const [userId, setUserId] = useState('');
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    const unsubscribe = firebaseConfig.auth.onAuthStateChanged((_user) => {
-      console.log(`User ${_user ? 'connected' : 'disconnected'}`);
+  // useEffect(() => {
+  //   const unsubscribe = firebaseConfig.auth.onAuthStateChanged((_user) => {
+  //     console.log(`User ${_user ? 'connected' : 'disconnected'}`);
 
-      setUser(_user);
-      setUserId(_user ? _user.uid : '');
-      // setTUser(); // Need to get user from firestore with userId
-      setIsLoading(isLoading ? false : true);
-    });
+  //     console.log(_user);
 
-    return () => unsubscribe();
-  }, [firebaseConfig.auth]);
+  //     // setUser(_user);
+  //     // setUserId(_user ? _user.uid : '');
+  //     // setTUser(); // Need to get user from firestore with userId
+  //     // setIsLoading(isLoading ? false : true);
+  //   });
+
+  //   return () => unsubscribe();
+  // }, [firebaseConfig.auth]);
+
+  // useEffect(() => {
+  //   const unsubscribe = firebaseConfig.auth.onAuthStateChanged((_user) => {
+  //     setUser(_user);
+  //     setIsLoading(false);
+  //   });
+
+  //   return () => unsubscribe();
+  // }, []);
+
+  // const handleLogin = async (email: string, password: string) => {
+  //   try {
+  //     const response = await auth.login(email, password);
+  //     return response.user;
+  //   } catch (error) {
+  //     console.error('[handleLogin error] ==>', error);
+  //     return undefined;
+  //   }
+  // };
 
   return (
     <Context.Provider value={{ user, userId, isLoading }}>
