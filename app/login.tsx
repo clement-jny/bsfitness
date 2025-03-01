@@ -8,7 +8,7 @@ import {
   Text,
   View,
 } from 'react-native';
-// import { useRouter } from 'expo-router';
+// import { useRouter, router } from 'expo-router';
 import { colors, styles as globalStyles } from '@/utils';
 import { BackButton, Icons } from '@/components';
 import { toast } from '@/managers';

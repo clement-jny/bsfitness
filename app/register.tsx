@@ -8,7 +8,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { router, useRouter } from 'expo-router';
 import { colors, styles as globalStyles } from '@/utils';
 import { BackButton, Icons } from '@/components';
 import { toast } from '@/managers';
@@ -25,7 +25,7 @@ import { FormInput } from '@/components';
 // INFO: if ok, go login / auto login ?
 
 const Register = () => {
-  const router = useRouter();
+  // const router = useRouter();
 
   const { handleSubmit, control } = useForm<TRegisterSchema>({
     resolver: zodResolver(registerSchema),

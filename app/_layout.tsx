@@ -4,23 +4,13 @@ import {
   Poppins_500Medium,
   Poppins_700Bold,
 } from '@expo-google-fonts/poppins';
-import { Slot, Stack, useRouter, useSegments } from 'expo-router';
+import { Stack, router } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import Toast from 'react-native-toast-message';
-import CustomLayout from './customLayout';
-import {
-  ActivityIndicator,
-  Button,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
-import { BackButton } from '@/components';
-import { SafeAreaView } from 'react-native-safe-area-context';
+// import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import { AuthContext } from '@/contexts';
-import { colors } from '@/utils';
-// import { StatusBar } from 'expo-status-bar';
+// import { colors } from '@/utils';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -53,24 +43,15 @@ export default () => {
 const RootLayout = () => {
   const { user, isLoading } = AuthContext.useAuth();
 
-  const router = useRouter();
-  const segments = useSegments();
-
   useEffect(() => {
-    if (isLoading) return;
+    if (user === undefined) return;
 
-    const inAuthGroup = segments[0] === '(auth)';
-
-    if (user && !inAuthGroup) {
-      console.log('oui 1');
-
-      router.replace('/(auth)/');
-    } else if (!user && inAuthGroup) {
-      console.log('oui 2');
-
+    if (user) {
+      router.replace('/(app)/home');
+    } else {
       router.replace('/');
     }
-  }, [user, isLoading]);
+  }, [user]);
 
   // if (isLoading) {
   //   return (
@@ -81,30 +62,32 @@ const RootLayout = () => {
   //   );
   // }
 
-  return <Slot />;
+  // return <Slot />;
 
-  // return (
-  //   <Stack
-  //     screenOptions={{
-  //       animation: 'fade',
-  //       headerShown: false,
-  //     }}>
-  //     {/* <Stack.Screen name='+not-found' /> */}
-  //   </Stack>
-  // );
+  return (
+    <Stack
+      screenOptions={{
+        animation: 'fade',
+        headerShown: false,
+      }}>
+      <Stack.Screen name='login' />
+      <Stack.Screen name='register' />
+      {/* <Stack.Screen name='+not-found' /> */}
+    </Stack>
+  );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.light.background,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff', // ou toute autre couleur de fond
-  },
-});
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     backgroundColor: colors.light.background,
+//     alignItems: 'center',
+//     justifyContent: 'center',
+//   },
+//   loadingContainer: {
+//     flex: 1,
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//     backgroundColor: '#fff', // ou toute autre couleur de fond
+//   },
+// });
