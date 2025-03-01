@@ -4,13 +4,11 @@ import {
   Poppins_500Medium,
   Poppins_700Bold,
 } from '@expo-google-fonts/poppins';
-import { Stack, router } from 'expo-router';
+import { Slot, Stack, useRouter } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import Toast from 'react-native-toast-message';
-// import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import { AuthContext } from '@/contexts';
-// import { colors } from '@/utils';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -41,26 +39,18 @@ export default () => {
 };
 
 const RootLayout = () => {
-  const { user, isLoading } = AuthContext.useAuth();
+  const { isAuthenticated } = AuthContext.useAuth();
+  const router = useRouter();
 
   useEffect(() => {
-    if (user === undefined) return;
+    if (isAuthenticated === undefined) return;
 
-    if (user) {
-      router.replace('/(app)/home');
+    if (isAuthenticated) {
+      router.replace('/(app)/account');
     } else {
       router.replace('/');
     }
-  }, [user]);
-
-  // if (isLoading) {
-  //   return (
-  //     <View style={styles.loadingContainer}>
-  //       <ActivityIndicator size='large' color={colors.light.accent} />
-  //       <Text>Loading...</Text>
-  //     </View>
-  //   );
-  // }
+  }, [isAuthenticated]);
 
   // return <Slot />;
 
@@ -76,18 +66,3 @@ const RootLayout = () => {
     </Stack>
   );
 };
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: colors.light.background,
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//   },
-//   loadingContainer: {
-//     flex: 1,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//     backgroundColor: '#fff', // ou toute autre couleur de fond
-//   },
-// });
