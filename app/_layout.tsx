@@ -46,7 +46,7 @@ const RootLayout = () => {
     if (isAuthenticated === undefined) return;
 
     if (isAuthenticated) {
-      router.replace('/(app)/account');
+      router.replace('/(auth)/account');
     } else {
       router.replace('/');
     }
