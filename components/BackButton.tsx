@@ -1,7 +1,7 @@
-import { useRouter } from 'expo-router';
+import { useRouter, router } from 'expo-router';
 import { Pressable, Text, View } from 'react-native';
 import { Icons } from './Icons';
-import { colors } from '@/utils';
+// import { colors } from '@/utils';
 
 type TBackButtonProps = {
   title?: string;
@@ -11,7 +11,7 @@ type TBackButtonProps = {
 // TODO: on color if it's dark theme - use a light color : colors.dark.text
 // TODO: call ThemeContext and chose color base on the result
 const BackButton = ({ title, color = 'black' }: TBackButtonProps) => {
-  const router = useRouter();
+  // const router = useRouter();
 
   const handleBack = () => {
     if (router.canGoBack()) {

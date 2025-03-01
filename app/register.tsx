@@ -8,7 +8,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { router, useRouter } from 'expo-router';
 import { colors, styles as globalStyles } from '@/utils';
 import { BackButton, Icons } from '@/components';
 import { toast } from '@/managers';
@@ -25,7 +25,7 @@ import { FormInput } from '@/components';
 // INFO: if ok, go login / auto login ?
 
 const Register = () => {
-  const router = useRouter();
+  // const router = useRouter();
 
   const { handleSubmit, control } = useForm<TRegisterSchema>({
     resolver: zodResolver(registerSchema),
@@ -38,21 +38,22 @@ const Register = () => {
     lastname,
     firstname,
   }: TRegisterSchema) => {
-    toast.success(`Welcome ${lastname} ${firstname}`);
-
-    // console.log(JSON.stringify(data));
-
+    // try {
     const result = await auth.register(email, password, {
       lastname,
       firstname,
     });
     console.log(result);
-  };
 
-  // TODO: keep?
-  const onError: SubmitErrorHandler<TRegisterSchema> = (errors, e) => {
-    // toast.error('Please fill all the fields');
-    // console.error(JSON.stringify(errors));
+    if (result.success) {
+      toast.success(result.message);
+    } else {
+      toast.error(result.message);
+    }
+    // } catch (err) {
+    //   console.log('[onSubmit register page] ==>', err);
+    //   return null;
+    // }
   };
 
   return (
@@ -183,7 +184,7 @@ const Register = () => {
           <View style={localStyles.buttons}>
             {/* // TODO: animated register btn with reanimated */}
             <Pressable
-              onPress={handleSubmit(onSubmit, onError)}
+              onPress={handleSubmit(onSubmit)}
               style={({ pressed }) => [
                 globalStyles.base.button,
                 pressed && { opacity: 0.6 },

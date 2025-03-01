@@ -51,8 +51,15 @@ const getAll = async (): Promise<TUser[] | null> => {
 // INFO: get the docUid from the AuthContext
 const me = async (docUid: string) => {
   try {
-    const user = await crudMethods.getDocument<TUser>(
+    // const user = await crudMethods.getDocument<TUser>(
+    //   'USER_COLLECTION',
+    //   docUid
+    // );
+
+    const user = await queryMethods.getDocumentWhere<TUser>(
       'USER_COLLECTION',
+      'authUid',
+      '==',
       docUid
     );
 

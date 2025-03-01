@@ -1,18 +1,10 @@
 import { firebaseConfig } from '@/utils';
 import { FirebaseError } from 'firebase/app';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword, type User } from 'firebase/auth';
+import { type TAuthReturn } from '@/types';
+import { error } from '@/managers';
 
-// TODO: common return type for auth.login/register/logout?
-type TLoginReturn = {
-  success: boolean;
-  user?: object;
-  errorCode?: string;
-};
-
-const login = async (
-  email: string,
-  password: string
-): Promise<TLoginReturn> => {
+const login = async (email: string, password: string): Promise<TAuthReturn> => {
   try {
     const userCredential = await signInWithEmailAndPassword(
       firebaseConfig.auth,
@@ -20,22 +12,23 @@ const login = async (
       password
     );
 
-    // TODO: remove these console.log and remove the returned user. User will be add in the AuthContext
-    // console.log('Login :: userCredential', userCredential);
-    // console.log('Login :: userCredential.user', userCredential.user);
+    console.log('Login :: userCredential', userCredential);
+    console.log('Login :: userCredential.user', userCredential.user);
 
     return {
       success: true,
-      user: userCredential.user,
+      message: 'Login successful',
+      data: { user: userCredential.user },
     };
-  } catch (error: unknown) {
-    const err = error as FirebaseError;
+  } catch (e: unknown) {
+    const err = e as FirebaseError;
 
-    console.error('Login :: code:', err.code);
+    console.log('Login :: code:', err.code);
+    console.log('[error logging in] ==>', err);
 
     return {
       success: false,
-      errorCode: err.code,
+      message: error.getFirebaseErrorMessage(err.code),
     };
   }
 };

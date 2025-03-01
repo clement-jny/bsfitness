@@ -2,20 +2,14 @@ import { firebaseConfig } from '@/utils';
 import { FirebaseError } from 'firebase/app';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { user } from '../db';
-import { type TNewUserDTO } from '@/types';
-
-// TODO: common return type for auth.login/register/logout?
-type TRegisterReturn = {
-  success: boolean;
-  user?: object;
-  errorCode?: string;
-};
+import { type TAuthReturn, type TNewUserDTO } from '@/types';
+import { error } from '@/managers';
 
 const register = async (
   email: string,
   password: string,
   newUserData: Pick<TNewUserDTO, 'lastname' | 'firstname'>
-): Promise<TRegisterReturn> => {
+): Promise<TAuthReturn> => {
   try {
     // INFO: trigger AuthContext and save userUid
     // TODO: don't want to trigger the context now
@@ -42,17 +36,21 @@ const register = async (
 
     return {
       success: true,
-      user: userCredential.user,
-      errorCode: docUid ?? '',
+      message: 'Register successful',
+      data: {
+        user: userCredential.user,
+        docUid,
+      },
     };
-  } catch (error: unknown) {
-    const err = error as FirebaseError;
+  } catch (e: unknown) {
+    const err = e as FirebaseError;
 
-    console.error('Register :: code:', err.code);
+    console.log('Register :: code:', err.code);
+    console.log('[error registering] ==>', err);
 
     return {
       success: false,
-      errorCode: err.code,
+      message: error.getFirebaseErrorMessage(err.code),
     };
   }
 };

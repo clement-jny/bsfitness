@@ -8,19 +8,19 @@ import {
   Text,
   View,
 } from 'react-native';
-import { useRouter } from 'expo-router';
+// import { useRouter, router } from 'expo-router';
 import { colors, styles as globalStyles } from '@/utils';
 import { BackButton, Icons } from '@/components';
 import { toast } from '@/managers';
 import { auth } from '@/services';
-import { Controller, SubmitErrorHandler, useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema } from '@/schema';
 import { type TLoginSchema } from '@/types';
 import { FormInput } from '@/components';
 
 const Login = () => {
-  const router = useRouter();
+  // const router = useRouter();
 
   const { handleSubmit, control } = useForm<TLoginSchema>({
     resolver: zodResolver(loginSchema),
@@ -28,18 +28,19 @@ const Login = () => {
   });
 
   const onSubmit = async ({ email, password }: TLoginSchema) => {
-    toast.success(`Welcome ${email} - ${password}`);
-
-    // console.log(JSON.stringify(data));
-
+    // try {
     const result = await auth.login(email, password);
     console.log(result);
-  };
 
-  // TODO: keep?
-  const onError: SubmitErrorHandler<TLoginSchema> = (errors, e) => {
-    // toast.error('Please fill all the fields');
-    // console.error(JSON.stringify(errors));
+    if (result.success) {
+      toast.success(result.message);
+    } else {
+      toast.error(result.message);
+    }
+    // } catch (err) {
+    //   console.log('[onSubmit login page] ==>', err);
+    //   return null;
+    // }
   };
 
   // const handleForgotPassword = () => {
@@ -113,7 +114,7 @@ const Login = () => {
           <View style={localStyles.buttons}>
             {/* // TODO: animated login btn with reanimated */}
             <Pressable
-              onPress={handleSubmit(onSubmit, onError)}
+              onPress={handleSubmit(onSubmit)}
               style={({ pressed }) => [
                 globalStyles.base.button,
                 pressed && { opacity: 0.6 },
@@ -133,8 +134,8 @@ const Login = () => {
             </Pressable> */}
           </View>
 
-          <View style={localStyles.registerZone}>
-            {/* // TODO: use colorScheme */}
+          {/* <View style={localStyles.registerZone}>
+            {/* // TODO: use colorScheme *
             <Text style={{ color: colors.light.text }}>
               Don't have an account ?
             </Text>
@@ -143,10 +144,10 @@ const Login = () => {
               onPress={() => {
                 router.replace('/register');
               }}>
-              {/* // TODO: use colorScheme */}
+              {/* // TODO: use colorScheme *
               <Text style={{ color: colors.light.text }}>Register</Text>
             </Pressable>
-          </View>
+          </View> */}
         </Pressable>
       </KeyboardAvoidingView>
     </SafeAreaView>
